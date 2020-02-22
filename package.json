@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "bot to track wingus performance in basic human activities",
   "main": "wingus-bot.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jhshelnu/WingusBot.git"
+  },
   "scripts": {
     "start": "node wingus-bot.js"
   },
