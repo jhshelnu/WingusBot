@@ -1,6 +1,6 @@
 require('dotenv').config();
 const fs = require('fs');
-const { prefix } = require('./config.json');
+const { prefix, wingusTerms, wingusEmoji } = require('./config.json');
 const Discord = require('discord.js');
 
 const client = new Discord.Client();
@@ -17,18 +17,29 @@ fs.readdirSync('./commands')
 	});
 
 client.on('message', msg => {
-	// Ignore non-commands and bot messages
-	if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+	// Ignore bot messages
+	if (msg.author.bot) return;
+
+	// Handle special messages that aren't commands
+	if (!msg.content.startsWith(prefix)) {
+
+		// If the message contains any of the Wingus terms
+		let msgText = msg.content.toLowerCase();
+		if (wingusTerms.some(wingusTerm => msgText.includes(wingusTerm))) {
+			msg.channel.send(wingusEmoji);
+		}
+
+		return;
+	}
 
 	// Extract command name and arguments
 	const args = msg.content.slice(prefix.length).split(/ +/);
-	const command = args.shift().toLowerCase();
+	const command = client.commands.get(args.shift().toLowerCase());
 
-	// Check if command is supported
-	if (!client.commands.has(command)) return;
+	if (command) {
+		command.execute(msg, args);
+	}
 
-	// If so, execute the command
-	client.commands.get(command).execute(msg, args);
 });
 
 client.login(process.env.TOKEN);
