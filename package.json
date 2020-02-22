@@ -1,0 +1,23 @@
+{
+  "name": "wingus-bot",
+  "version": "1.0.0",
+  "description": "bot to track wingus performance in basic human activities",
+  "main": "wingus-bot.js",
+  "scripts": {
+    "start": "node wingus-bot.js"
+  },
+  "keywords": [
+    "wingus",
+    "csce",
+    "wing",
+    "ning",
+    "timer"
+  ],
+  "author": "John Shelnutt",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
+    "table": "^5.4.6"
+  }
+}
