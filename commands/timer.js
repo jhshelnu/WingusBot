@@ -22,7 +22,7 @@ const stop = {
 			return;
 		}
 
-		duration = (Date.now() - startTime)/1000;
+		duration = Math.round((Date.now() - startTime)/1000);
 		msg.channel.send(`Wingus took ${duration} seconds.`);
 		startTime = undefined; // reset the startTime variable afterwards
 	}
