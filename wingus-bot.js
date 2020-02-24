@@ -1,10 +1,12 @@
 require('dotenv').config();
 const fs = require('fs');
+const Sentiment = require('sentiment');
 const { prefix, wingusTerms, wingusEmoji } = require('./config.json');
 const Discord = require('discord.js');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+let sentiment = new Sentiment();
 
 // Dynamically load all command callbacks in the commands directory.
 fs.readdirSync('./commands')
@@ -25,8 +27,11 @@ client.on('message', msg => {
 
 		// If the message contains any of the Wingus terms
 		let msgText = msg.content.toLowerCase();
+		
 		if (wingusTerms.some(wingusTerm => msgText.includes(wingusTerm))) {
-			msg.channel.send(wingusEmoji);
+			if (sentiment.analyze(msgText).score < 0) {
+				msg.channel.send(wingusEmoji);
+			}
 		}
 
 		return;
