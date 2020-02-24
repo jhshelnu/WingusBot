@@ -10,10 +10,9 @@ const help = {
 
 		// Send real response after brief timeout
 		setTimeout(() => {
-			let commandsList = [];
-			msg.client.commands.forEach(command => {
-				commandsList.push([prefix + command.name, command.desc]);
-			});
+			let commandsList = msg.client.commands.map(command =>
+				[prefix + command.name, command.desc]
+			);
 
 			commandsTable = tableFormat(commandsList, {
 				columns: {

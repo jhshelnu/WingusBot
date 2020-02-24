@@ -11,9 +11,9 @@ fs.readdirSync('./commands')
 	.filter(file => file.endsWith('.js'))
 	.forEach(file => {
 		const commandModule = require(`./commands/${file}`);
-		for (const command in commandModule) {
-			client.commands.set(commandModule[command].name, commandModule[command]);
-		}
+		Object.values(commandModule).forEach(command => {
+			client.commands.set(command.name, command);
+		});
 	});
 
 client.on('message', msg => {
