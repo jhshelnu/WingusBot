@@ -9,7 +9,7 @@ const start = {
 	desc: "Starts a timer to track Wing Ning's performance",
 	execute(msg, args) {
 		startTime = Date.now();
-		msg.channel.send('Timer started.')
+		msg.channel.send('Timer started.');
 	}
 }
 
@@ -45,13 +45,15 @@ const save = {
 		}
 
 		let title = args.join(' ');
-		TimerModel.create({ title, duration });
-
-		// Reset the duration variable
-		duration = undefined;
-
-		// Notify user
-		msg.channel.send('Timer saved.');
+		TimerModel.create({ title, duration })
+			.then(timer => {
+				duration = undefined;
+				msg.channel.send('Timer saved');
+			})
+			.catch(err => {
+				console.log(err);
+				msg.channel.send('Unable to save timer. Try again.');
+			})
 	}
 }
 
