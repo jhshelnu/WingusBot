@@ -4,6 +4,20 @@ const TimerModel = require('../models/TimerModel.js');
 let startTime;
 let duration;
 
+const time = {
+	name: "time",
+	desc: "Displays the current timer duration",
+	execute(msg, args) {
+		if (!startTime) {
+			msg.channel.send('There is no timer running');
+			return;
+		}
+		
+		let currentDuration = Math.round((Date.now() - startTime)/1000);
+		msg.channel.send(`The current timer is at ${currentDuration}s`);
+	}
+}
+
 const start = {
 	name: "start",
 	desc: "Starts a timer to track Wing Ning's performance",

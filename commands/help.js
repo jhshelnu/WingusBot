@@ -17,10 +17,10 @@ const help = {
 			commandsTable = tableFormat(commandsList, {
 				columns: {
 					0: {
-						width: 6
+						width: 10
 					},
 					1: {
-						width: 50,
+						width: 30,
 						wrapWord: true
 					} 
 				}
