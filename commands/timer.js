@@ -1,8 +1,8 @@
 const { codeFormat, tableFormat } = require('./helpers/formatHelper.js');
+const TimerModel = require('../models/TimerModel.js');
 
 let startTime;
 let duration;
-let savedTimes = [];
 
 const start = {
 	name: "start",
@@ -44,12 +44,8 @@ const save = {
 			return;
 		}
 
-		// Add saved timer object to array
 		let title = args.join(' ');
-		savedTimes.push({
-			title,
-			duration,
-		});
+		TimerModel.create({ title, duration });
 
 		// Reset the duration variable
 		duration = undefined;
@@ -63,26 +59,41 @@ const list = {
 	name: "list",
 	desc: "Lists all saved Wingus timers",
 	execute(msg, args) {
-		if (savedTimes.length === 0) {
-			msg.channel.send('There are no saved Wingus timers.');
+		TimerModel.findAll({ rejectOnEmpty: true })
+			.then(timers => {
+				let timerListResponse = tableFormat(
+					timers.map(timer => [timer.id, timer.title, timer.duration + 's'])
+				);
+
+				msg.channel.send(codeFormat(timerListResponse));
+			})
+			.catch(err => {
+				msg.channel.send('No timers found');
+			});
+	}
+}
+
+const del = {
+	name: "delete",
+	desc: "Deletes a saved Wingus timer with the specified ID",
+	execute(msg, args) {
+		if (args.length === 0) {
+			msg.channel.send('You must specify a timer\'s ID');
 			return;
 		}
 
-		savedTimesResponse = tableFormat(
-			savedTimes.map(timer => [timer.title, timer.duration + 's']), {
-				columns: {
-					0: {
-						width: 50,
-						wrapWord: true
-					},
-					1: {
-						width: 6
-					} 
-				}
+		let id = args[0];
+		TimerModel.destroy({
+			where: {
+				id,
 			}
-		);
-
-		msg.channel.send(codeFormat(savedTimesResponse));
+		}).then(num => {
+			if (num === 0){
+				msg.channel.send('No timers what that ID found');
+			} else {
+				msg.channel.send(`Deleted timer #${id}`);
+			}
+		})
 	}
 }
 
@@ -91,4 +102,5 @@ module.exports = {
 	stop,
 	save,
 	list,
+	del,
 }
