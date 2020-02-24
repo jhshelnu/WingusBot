@@ -12,7 +12,7 @@ const time = {
 			msg.channel.send('There is no timer running');
 			return;
 		}
-		
+
 		let currentDuration = Math.round((Date.now() - startTime)/1000);
 		msg.channel.send(`The current timer is at ${currentDuration}s`);
 	}
@@ -114,6 +114,7 @@ const del = {
 }
 
 module.exports = {
+	time,
 	start,
 	stop,
 	save,
