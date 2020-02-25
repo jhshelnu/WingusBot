@@ -1,17 +1,10 @@
-const { table, getBorderCharacters } = require('table');
+const Discord = require('discord.js');
+const { wingusColor } = require('../../config.json');
 
-const codeFormat = str => {
-	return "```\n" + str + "\n```";
-}
-
-const tableFormat = (arr, options) => {
-	return table(arr, {
-		border: getBorderCharacters('norc'),
-		...options,
-	});
+const getEmbed = () => {
+	return new Discord.RichEmbed().setColor(wingusColor);
 }
 
 module.exports = {
-	codeFormat,
-	tableFormat,
+	getEmbed,
 }

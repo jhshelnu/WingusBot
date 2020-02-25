@@ -1,5 +1,5 @@
-const { codeFormat, tableFormat } = require('./helpers/formatHelper.js');
-const TimerModel = require('../models/TimerModel.js');
+const { getEmbed } = require('./helpers/formatHelper')
+const TimerModel = require('../models/TimerModel');
 
 let startTime;
 let duration;
@@ -46,13 +46,11 @@ const save = {
 	name: "save",
 	desc: "Saves the last timer duration",
 	execute(msg, args) {
-		// Check if there is an existing duration to save
 		if (!duration) {
 			msg.channel.send('There is no duration to save.');
 			return;
 		}
 
-		// Check if a title has been provided
 		if (args.length === 0) {
 			msg.channel.send('You must specify a title');
 			return;
@@ -75,16 +73,22 @@ const list = {
 	name: "list",
 	desc: "Lists all saved Wingus timers",
 	execute(msg, args) {
-		TimerModel.findAll({ rejectOnEmpty: true })
+		TimerModel.findAll()
 			.then(timers => {
-				let timerListResponse = tableFormat(
-					timers.map(timer => [timer.id, timer.title, timer.duration + 's'])
-				);
+				let listEmbed = getEmbed().setTitle('Wing Ning\'s Stats');
 
-				msg.channel.send(codeFormat(timerListResponse));
+				if (timers.length === 0) {
+					listEmbed.setDescription('No timer stats yet.');
+				} else {
+					timers.forEach(timer => {
+						listEmbed.addField('#' + timer.id, `${timer.title}\n${timer.duration}s`);
+					});
+				}
+
+				msg.channel.send(listEmbed);
 			})
 			.catch(err => {
-				msg.channel.send('No timers found');
+				msg.channel.send('Error fetching saved timers. Try Again.');
 			});
 	}
 }

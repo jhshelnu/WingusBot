@@ -1,31 +1,19 @@
-const { codeFormat, tableFormat } = require('./helpers/formatHelper.js');
+const { getEmbed } = require('./helpers/formatHelper');
 const { prefix } = require('../config.json');
 
 const help = {
 	name: "help",
 	desc: "Displays this list of commands",
 	execute(msg, args) {
-		// Send joke response
 		msg.channel.send("http://www.cplusplus.com/reference/cstring/strtok/");
-
-		// Send real response after brief timeout
 		setTimeout(() => {
-			let commandsList = msg.client.commands.map(command =>
-				[prefix + command.name, command.desc]
-			);
+			const helpEmbed = getEmbed();
 
-			commandsTable = tableFormat(commandsList, {
-				columns: {
-					0: {
-						width: 10
-					},
-					1: {
-						width: 30,
-						wrapWord: true
-					} 
-				}
-			})
-			msg.channel.send(codeFormat(commandsTable));
+			msg.client.commands.forEach(command => {
+				helpEmbed.addField(prefix + command.name, command.desc);
+			});
+
+			msg.channel.send(helpEmbed);
 		}, 2000);
 	}
 }
