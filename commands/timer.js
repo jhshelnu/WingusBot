@@ -81,7 +81,7 @@ const list = {
 					listEmbed.setDescription('No timer stats yet.');
 				} else {
 					timers.forEach(timer => {
-						listEmbed.addField('#' + timer.id, `${timer.title}\n${timer.duration}s`);
+						listEmbed.addField('#' + timer.id, `${timer.title}\n**${timer.duration}s**`);
 					});
 				}
 
