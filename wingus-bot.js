@@ -1,12 +1,11 @@
 require('dotenv').config();
 const fs = require('fs');
-const Sentiment = require('sentiment');
-const { prefix, wingusTerms, wingusEmoji } = require('./config.json');
+const { prefix } = require('./config.json');
 const Discord = require('discord.js');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-let sentiment = new Sentiment();
+client.passives = [];
 
 // Dynamically load all command callbacks in the commands directory.
 fs.readdirSync('./commands')
@@ -18,29 +17,29 @@ fs.readdirSync('./commands')
 		});
 	});
 
+// Dynamically load all passive callbacks in passives directory
+fs.readdirSync('./passives')
+	.filter(file => file.endsWith('.js'))
+	.forEach(file => {
+		const passiveModule = require(`./passives/${file}`);
+		Object.values(passiveModule).forEach(passive => {
+			client.passives.push(passive);
+		})
+	})
+
 client.on('message', msg => {
-	// Ignore bot messages
 	if (msg.author.bot) return;
 
-	// Handle special messages that aren't commands
+	// Pass all non-commands to passive callbacks
 	if (!msg.content.startsWith(prefix)) {
-
-		// If the message contains any of the Wingus terms
-		let msgText = msg.content.toLowerCase();
-		
-		if (wingusTerms.some(wingusTerm => msgText.includes(wingusTerm))) {
-			if (sentiment.analyze(msgText).score < 0) {
-				msg.channel.send(wingusEmoji);
-			}
-		}
-
+		client.passives.forEach(passive => {
+			passive(msg);
+		});
 		return;
 	}
 
-	// Extract command name and arguments
 	const args = msg.content.slice(prefix.length).split(/ +/);
 	const command = client.commands.get(args.shift().toLowerCase());
-
 	if (command) {
 		command.execute(msg, args);
 	}
